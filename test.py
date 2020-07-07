@@ -1,5 +1,15 @@
-def extractBrief(line) :
-    return line[line.find('\\brief') + len('\\brief'):].strip()
+def extractBrief(lines) :
+    brief = ""
+
+    for line in lines:
+
+        if line.find("\\brief") != -1:
+            brief += line[line.find('\\brief') + len('\\brief'):].strip()
+
+        else :
+            brief += line.strip('/\n ')
+        brief +=' '
+    return brief
 
 def extractName(line) :
     return line[line.find('}') + 1 : line.find(';')].strip()
@@ -41,16 +51,33 @@ def ansisEnumBlock(block, fout):
     enumName = extractName(block[num-1])
     enumEle = []
     print(enumName)
-    for line in block:
+    briefIdx = []
+    for idx in range(0, num):
+        line = block[idx]
         if "\\brief" in line:
-            brief = extractBrief(line)
-            print(brief)
+            print(idx)
+            briefIdx.append(idx)
+        elif line.strip().startswith('///') :
+            briefIdx.append(idx);
         elif '///<' in line and not line.startswith('//'):
             key,value,des = extractEnumEle(line)
             enumEle.append(key)
             enumEle.append(value)
             enumEle.append(des)
             print(key,value, des)
+    
+    print(briefIdx)
+
+    start = briefIdx[0]
+    briefs=[]
+    for idx in briefIdx:
+        if idx == start:
+            briefs.append(block[idx])
+        else:
+            break
+        start +=1
+
+    brief = extractBrief(briefs)
 
     if len(enumEle) > 0 :
         writeEnumToFile(brief, enumName, enumEle, fout)
@@ -125,18 +152,38 @@ def ansisStructBlock(block, fout):
     Name = extractName(block[num-1])
     structEle = []
     print(Name)
-    for line in block:
+
+    briefIdx = []
+    for idx in range(0, num):
+        line = block[idx]
         if "\\brief" in line:
-            brief = extractBrief(line)
-            print(brief)
-        elif '///<' in line and not line.startswith('//'):
+            briefIdx.append(idx)
+        elif line.strip().startswith('///') :
+            briefIdx.append(idx);
+            #brief = extractBrief(line)
+            #print(brief)
+        elif '///<' in line and not line.startswith('///'):
             typ, val, des = extractStructEle(line)
             structEle.append(typ)
             structEle.append(val)
             structEle.append(des)
-           # print(key,des)
+
     
-    print("++++++++++++++++" , len(structEle))
+    
+    print("==================" , briefIdx)
+
+    start = briefIdx[0]
+    briefs=[]
+    for idx in briefIdx:
+        if idx == start:
+            briefs.append(block[idx])
+        else:
+            break
+        start +=1
+
+    brief = extractBrief(briefs)
+    
+    #print("++++++++++++++++" , len(structEle))
 
     if len(structEle) > 0 :
         writeStructToFile(brief, Name, structEle, fout)
