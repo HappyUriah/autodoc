@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+
 def extractBrief(lines) :
     brief = ""
 
@@ -39,11 +43,7 @@ def writeEnumToFile(brief, name, ele, f) :
   
 
 
-def isEnum(block):
-    for line in block :
-        if 'enum ' in line:
-            return True
-    return False
+
 
 def ansisEnumBlock(block, fout):
 

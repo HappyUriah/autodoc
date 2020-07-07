@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
 def extractBrief(lines) :
     brief = ""
 
@@ -13,12 +16,8 @@ def extractBrief(lines) :
 
 def extractName(line) :
     return line[line.find('}') + 1 : line.find(';')].strip()
-    
-def isStruct(block):
-    for line in block :
-        if 'struct ' in line:
-            return True
-    return False
+
+
 
 def extractArrayEle(note) :
     strs = note.split()
@@ -90,8 +89,7 @@ def ansisStructBlock(block, fout):
         line = block[idx]
         if "\\brief" in line:
             briefIdx.append(idx)
-        elif line.strip().startswith('///') :
-            briefIdx.append(idx);
+        
             #brief = extractBrief(line)
             #print(brief)
         elif '///<' in line and not line.startswith('///'):
@@ -99,6 +97,8 @@ def ansisStructBlock(block, fout):
             structEle.append(typ)
             structEle.append(val)
             structEle.append(des)
+        elif line.strip().startswith('///') :
+            briefIdx.append(idx);
 
     
     
