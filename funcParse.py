@@ -195,18 +195,22 @@ def ansisFunctionBlock(block, fout):
     fout.write(body)
     fout.write('\n```\n功能描述\n\n')
 
-    
-    fout.write(brief + '\n\n参数说明\n')
-    fout.write(" | 参数      |    类型 | 描述  |\n| :-------- | --------:| :--: |\n")
+    if len(resultParams) > 0 :
+        fout.write(brief + '\n\n参数说明\n')
+        fout.write("| 参数      |    类型 | 描述  |\n| :-------- | --------:| :--: |\n")
    
    
     for p in resultParams:
         fout.write("|" + p[0] + "|" + p[1] + "|" + p[2] + "|\n")
 
+    if len(rets) > 0 :
+        fout.write('\n 返回值 ')
+        fout.write("\n\n")
 
+    for ret in rets :
+        fout.write(ret +" ")
 
-    
-
+    fout.write('\n\n')
     print(body)
 
     

@@ -34,7 +34,7 @@ def isFunc(block) :
 
   
 
-fout = open('output.md','w')
+fout = open('output.md','a+')
 
 
 
