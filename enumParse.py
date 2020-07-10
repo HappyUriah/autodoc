@@ -32,10 +32,10 @@ def extractEnumEle(line) :
     return key, value, des
     
 def writeEnumToFile(brief, name, ele, f) :
-    f.write('### ' + name + '\n')
-    f.write('*枚举描述' + '*\n\n')
-    f.write(brief + '\n')
-    f.write(" | 枚举名      |    枚举值 | 描述  |\n| :-------- | --------:| :--: |\n")
+    f.write('\n\n### ' + name + '\n')
+    f.write('*枚举描述*\n\n')
+    f.write(brief + '\n\n')
+    f.write("|枚举名      |    枚举值 | 描述  |\n| :-------- | --------:| :--: |\n")
    
     cnt = (int)(len(ele) / 3)
     for i in range(0, cnt):

@@ -190,13 +190,14 @@ def ansisFunctionBlock(block, fout):
     print(params)
     resultParams = mergeParams(commentParams, params)
 
-    fout.write('## ' + funcname + '\n')
-    fout.write('方法\n```c++\n')
+    fout.write('## ' + funcname + '\n\n')
+    fout.write('*方法*\n```c++\n\n')
     fout.write(body)
-    fout.write('\n```\n功能描述\n\n')
+    fout.write('\n```\n*功能描述*\n\n')
+    fout.write(brief + "\n")
 
     if len(resultParams) > 0 :
-        fout.write(brief + '\n\n参数说明\n')
+        fout.write('\n\n*参数说明*\n\n')
         fout.write("| 参数      |    类型 | 描述  |\n| :-------- | --------:| :--: |\n")
    
    
@@ -204,7 +205,7 @@ def ansisFunctionBlock(block, fout):
         fout.write("|" + p[0] + "|" + p[1] + "|" + p[2] + "|\n")
 
     if len(rets) > 0 :
-        fout.write('\n 返回值 ')
+        fout.write('\n*返回值* ')
         fout.write("\n\n")
 
     for ret in rets :
