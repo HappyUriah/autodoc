@@ -42,28 +42,32 @@ def findItemComment(item, blocks) :
         if line.find(item) != -1 :
         
             otherEles = line.split(",")
-            print(item, line, otherEles)
+         #   print(item, line, otherEles)
             assert item == otherEles[0].strip()
 
-            assert otherEles[1].find('///<') != -1
-            return otherEles[1][otherEles[1].find('///<') + 4:].strip() 
-            
+            assert otherEles[0].find('///<') != -1 or otherEles[1].find('///<') != -1
+
+            if otherEles[0].find('///<') != -1:
+                return otherEles[0][otherEles[0].find('///<') + 4:].strip() 
+            elif otherEles[1].find('///<') != -1 :
+                return otherEles[1][otherEles[1].find('///<') + 4:].strip() 
 
 
 
 def extractEnumEle(strs, blocks) :
 
     strs = strs[strs.find('{') + 1 : strs.find('}')]
-    print(strs)
+  #  print(strs)
     items = strs.split(',')
-    print(items)
+   # print(items)
     for item in items:
         print(item)
         eles = item.split()
         assert len(eles) == 3 or len(eles) == 0
 
         if len(eles) == 3 :
-            findItemComment(item, blocks)
+            comment = findItemComment(item, blocks)
+            print(comment)
     
     # keyword = '///<'
     # des = line[line.find(keyword) + len(keyword): ]

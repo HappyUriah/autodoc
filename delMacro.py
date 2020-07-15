@@ -2,6 +2,7 @@ import sys
 import enumParse as enum
 import structParse as struct
 import funcParse as func
+import classParse 
 
 def isComment(line):
     return line.strip().startswith('//')
@@ -23,10 +24,21 @@ def isEnum(strs):
     return False
     #return eles[0] == "enum" or (eles[0] == "typedef " and eles[1] == "enum")
 
+def isClass(strs):
+
+    if strs.strip().startswith("class ") and strs.count('{') > 0 :
+        return True
+    else :
+        return False
+
+
 def ansisBlock(strs, blocks):
     if isEnum(strs):
 
         enum.ansisEnumBlock(strs, blocks)
+    elif isClass(strs):
+        classParse.ansisClassBlock(strs, blocks)
+
         #print("is enum")
 
 
