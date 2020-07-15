@@ -15,8 +15,17 @@ def extractBrief(lines) :
         brief +=' '
     return brief
 
-def extractName(line) :
-    return line[line.find('}') + 1 : line.find(';')].strip()
+def extractName(strs) :
+    eles = strs.split()
+    if eles[0] == "enum" and eles[1] == "class" :
+        return eles[2].strip('{};')
+    elif eles[0] == "enum":
+        return eles[1].strip('{};')
+    elif eles[0] == "typedef" and eles[-1] == ';' :
+        return eles[-2].strip('{};')
+    else :
+        return eles[-1][:-1].strip('{};')
+
 
 def extractEnumEle(line) :
     keyword = '///<'
@@ -45,39 +54,40 @@ def writeEnumToFile(brief, name, ele, f) :
 
 
 
-def ansisEnumBlock(block, fout):
-
-    num = len(block)
-    enumName = extractName(block[num-1])
-    enumEle = []
-    print(enumName)
-    briefIdx = []
-    for idx in range(0, num):
-        line = block[idx]
-        if "\\brief" in line:
-            print(idx)
-            briefIdx.append(idx)
-        elif line.strip().startswith('///') :
-            briefIdx.append(idx);
-        elif '///<' in line and not line.startswith('//'):
-            key,value,des = extractEnumEle(line)
-            enumEle.append(key)
-            enumEle.append(value)
-            enumEle.append(des)
-            print(key,value, des)
+def ansisEnumBlock(strs, blocks):
+    name = extractName(strs)
+    print("name = ", name);
+    # num = len(block)
+    # enumName = extractName(block[num-1])
+    # enumEle = []
+    # print(enumName)
+    # briefIdx = []
+    # for idx in range(0, num):
+    #     line = block[idx]
+    #     if "\\brief" in line:
+    #         print(idx)
+    #         briefIdx.append(idx)
+    #     elif line.strip().startswith('///') :
+    #         briefIdx.append(idx);
+    #     elif '///<' in line and not line.startswith('//'):
+    #         key,value,des = extractEnumEle(line)
+    #         enumEle.append(key)
+    #         enumEle.append(value)
+    #         enumEle.append(des)
+    #         print(key,value, des)
     
-    print(briefIdx)
+    # print(briefIdx)
 
-    start = briefIdx[0]
-    briefs=[]
-    for idx in briefIdx:
-        if idx == start:
-            briefs.append(block[idx])
-        else:
-            break
-        start +=1
+    # start = briefIdx[0]
+    # briefs=[]
+    # for idx in briefIdx:
+    #     if idx == start:
+    #         briefs.append(block[idx])
+    #     else:
+    #         break
+    #     start +=1
 
-    brief = extractBrief(briefs)
+    # brief = extractBrief(briefs)
 
-    if len(enumEle) > 0 :
-        writeEnumToFile(brief, enumName, enumEle, fout)
+    # if len(enumEle) > 0 :
+    #     writeEnumToFile(brief, enumName, enumEle, fout)
