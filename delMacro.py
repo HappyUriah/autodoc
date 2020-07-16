@@ -24,9 +24,29 @@ def isEnum(strs):
     return False
     #return eles[0] == "enum" or (eles[0] == "typedef " and eles[1] == "enum")
 
+
+def isStruct(strs):
+    eles = strs.split()
+    print(eles)
+
+    if len(eles) < 3:
+        return False
+    
+    if eles[0] == "struct":
+        return True
+    if eles[0] == "typedef" and eles[1] == "struct" :
+        return True
+    return False
+
 def isClass(strs):
 
     if strs.strip().startswith("class ") and strs.count('{') > 0 :
+        return True
+    else :
+        return False
+
+def isFunction(strs):
+    if "(" in strs and ")" in strs:
         return True
     else :
         return False
@@ -38,6 +58,12 @@ def ansisBlock(strs, blocks):
         enum.ansisEnumBlock(strs, blocks)
     elif isClass(strs):
         classParse.ansisClassBlock(strs, blocks)
+    
+    elif isStruct(strs):
+        struct.ansisStructBlock(strs,blocks)
+    
+    elif isFunction(strs):
+        func.ansisFunctionBlock(strs, blocks)
 
         #print("is enum")
 

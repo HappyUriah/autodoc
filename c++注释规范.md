@@ -132,7 +132,7 @@ Function
 
 brief:
 
-单行的 /// 注释以及一些结构化的命令，比方有 \param, \return 等.以及符合 *\-* 的使用。 *\-* 作为key,value的分隔符。
+单行的 /// 注释以及一些结构化的命令，比方有 \param, \return, \tparam 等.以及符合 *\-* 的使用。 *\-* 作为key,value的分隔符。
 
 ```
 /// \brief function description.
@@ -140,6 +140,15 @@ brief:
 /// \param b - 变量2
 /// \return 变量1和变量2之和
 int add(int a, int b);
+```
+
+```
+/// \brief template function description
+/// \tparam a - 变量1
+/// \tparam b - 变量2
+/// \return 变量1和变量2之和
+template<typename T> 
+int add(T a, T b);
 ```
 
 Variable
