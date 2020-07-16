@@ -3,6 +3,7 @@ import enumParse as enum
 import structParse as struct
 import funcParse as func
 import classParse 
+import otherParse as other
 
 def isComment(line):
     return line.strip().startswith('//')
@@ -11,35 +12,27 @@ def isStatement(line) :
     return line.strip().endswith(';')
 
 
-    #return eles[0] == "enum" or (eles[0] == "typedef " and eles[1] == "enum")
+  
 
 
-
-
-def isClass(strs):
-
-    if strs.strip().startswith("class ") and strs.count('{') > 0 :
-        return True
-    else :
-        return False
 
 
 
 
 def ansisBlock(strs, blocks):
     if enum.isEnum(strs):
-
         enum.ansisEnumBlock(strs, blocks)
-    elif isClass(strs):
-        pass
-        #classParse.ansisClassBlock(strs, blocks)
-    
+    elif classParse.isClass(strs):
+        classParse.ansisClassBlock(strs, blocks)
     elif struct.isStruct(strs):
         
         struct.ansisStructBlock(strs,blocks)
     
     elif func.isFunction(strs):
-        pass
+        func.ansisFunctionBlock(strs, blocks)
+
+    else :
+        other.ansisOtherBlock(strs, blocks)
         #func.ansisFunctionBlock(strs, blocks)
 
         #print("is enum")
