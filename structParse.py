@@ -1,28 +1,45 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+def isStruct(strs):
+    eles = strs.split()
+    print(eles)
 
+    if len(eles) < 3:
+        return False
+    
+    if eles[0] == "struct":
+        return True
+    if eles[0] == "typedef" and eles[1] == "struct" :
+        return True
+    return False
+
+def rmComment(line):
+    if line.find("//") != -1 :
+        return line[:line.find("//")]
+    else :
+        return line
+
+#提取描述信息 
 def extractBrief(blocks) :
+    word="\\brief "
     brief = ""
-    hasBrief = 0
+    start = -1
+    num = len(blocks)
+    for id in range(0, num):
+        line = blocks[id].strip()
+        if word in line :
+            start = id + 1
+            brief += line[line.find(word) + len(word):]
+        elif id == start and   line.startswith("//") :
+            start +=1
+            brief += line.strip('/')
 
-    for line in blocks:
-
-        line = line.strip()
-        if line.startswith('/// ') and line.find("\\brief") != -1:
-            hasBrief = 1
-            brief += line[line.find('\\brief') + len('\\brief'):].strip()
-
-        elif line.startswith('///') and hasBrief == 1 :
-            brief += line.strip('/\n ')
-        
-        elif hasBrief == 1 :
-            break
-        else :
-            pass
-       
+    #print("brief = " , brief)
     return brief
 
+
+#解析结构体名称
 def extractName(strs) :
     eles = strs.split()
     if eles[0] == "struct":
@@ -32,65 +49,100 @@ def extractName(strs) :
     else :
         return eles[-1][:-1].strip('{};')
 
-
-def findItemComment(item, blocks) :
+# 校验合法性，主要判断是否存在多行项
+def valid(blocks) :
+    for line in blocks:
+        line = line.strip()
+        if line.startswith("//"):
+            continue
+        else :
+            line = rmComment(line).strip()
+            if line.count("{") + line.count(";") > 1:
+                print("wrong format!!!!,请注意换行")
+                return False
+            elif line.find(";") != -1 and line.find("}") != -1 and  line.find(";") < line.find("}"):
+                print("wrong format!!!!,请注意换行")
+                return False
+         
+          
+    
     return True
-    # item = item.strip()
-    # eles = item.split(",")
-    # for line in blocks:
-    #     if line.find(item) != -1 :
-        
-    #         otherEles = line.split(",")
-    #      #   print(item, line, otherEles)
-    #         assert item == otherEles[0].strip()
 
-    #         assert otherEles[0].find('///<') != -1 or otherEles[1].find('///<') != -1
+def extractArrayEle(note) :
+    strs = note.split()
 
-    #         if otherEles[0].find('///<') != -1:
-    #             return otherEles[0][otherEles[0].find('///<') + 4:].strip() 
-    #         elif otherEles[1].find('///<') != -1 :
-    #             return otherEles[1][otherEles[1].find('///<') + 4:].strip() 
+    for str1 in strs:
+        if('[' in str1) :
+            val = str1[:str1.find('[')]
+            break
+    typ = note[0: note.find(val)]
+    typ += '[]'
+    return typ, val
 
-
-
-# def extractEnumEle(strs, blocks) :
-
-#     strs = strs[strs.find('{') + 1 : strs.find('}')]
-#   #  print(strs)
-#     items = strs.split(',')
-#    # print(items)
-#     for item in items:
-#         print(item)
-#         eles = item.split()
-#         assert len(eles) == 3 or len(eles) == 0
-
-#         if len(eles) == 3 :
-#             comment = findItemComment(item, blocks)
-#             print(comment)
+def extractValEle(note) :
+    strs = note.split()
+    num = len(strs)
     
-    # keyword = '///<'
-    # des = line[line.find(keyword) + len(keyword): ]
-    # strs = line.split()
-    # key = strs[0];
+    lastStr = strs[num - 1]
+    if lastStr == ";" :
+        assert num > 2 
+        val = strs[num - 2]
+    else :
+        val = lastStr[0:-1]
+    typ = note[0: note.find(val)]
+    return typ, val
+    
 
-    # if strs[1].strip() == "=" :
-    #     value = strs[2].strip(',')
-    # else :
-    #     value = strs[1][1:].strip(',')
-    
-    # return key, value, des
-    
-# def writeEnumToFile(brief, name, ele, f) :
-#     f.write('\n\n### ' + name + '\n')
-#     f.write('*枚举描述*\n\n')
-#     f.write(brief + '\n\n')
-#     f.write("|枚举名      |    枚举值 | 描述  |\n| :-------- | --------:| :--: |\n")
+
+def extractStructEle(blocks) :
+
+    start = -1
+    end = -1
+    num = len(blocks)
+    for i in range(0,num):
+        line = blocks[i].strip()
+        if line.startswith("//"):
+            continue
+        else :
+            line = rmComment(line)
+            if "{" in line:
+                start = i
+             
+            elif "}" in line:
+                end = i
    
-#     cnt = (int)(len(ele) / 3)
-#     for i in range(0, cnt):
-#         f.write("|" + ele[3 *i] + "|" + ele[3 * i + 1] + "|" + ele[3 * i + 2] + "|\n")
-  
+    
+    assert start != -1
+    assert end != -1
+    assert start < end
 
+    keyword = '///<'
+    items = []
+    for i in range(start + 1, end):
+        line = blocks[i].strip()
+        if  line == "" :
+            continue
+        elif line.startswith("//"):
+            continue
+        
+      #  print("#############", line)
+        assert line.find(keyword) != -1
+        des = line[line.find(keyword) + len(keyword): ]
+        assert des
+        note = rmComment(line)
+       
+        if '[' in note :
+            # 数组
+            typ, val = extractArrayEle(note)
+            tvd = (typ, val, des)
+            items.append(tvd)
+        else :
+            typ, val = extractValEle(note)
+            tvd= (typ, val, des)
+            items.append(tvd)
+
+
+    return items
 
 
 
@@ -101,38 +153,8 @@ def ansisStructBlock(strs, blocks):
     brief = extractBrief(blocks)
     print("brief = ", brief)
     assert brief
-   # extractEnumEle(strs, blocks)
-    # num = len(block)
-    # enumName = extractName(block[num-1])
-    # enumEle = []
-    # print(enumName)
-    # briefIdx = []
-    # for idx in range(0, num):
-    #     line = block[idx]
-    #     if "\\brief" in line:
-    #         print(idx)
-    #         briefIdx.append(idx)
-    #     elif line.strip().startswith('///') :
-    #         briefIdx.append(idx);
-    #     elif '///<' in line and not line.startswith('//'):
-    #         key,value,des = extractEnumEle(line)
-    #         enumEle.append(key)
-    #         enumEle.append(value)
-    #         enumEle.append(des)
-    #         print(key,value, des)
-    
-    # print(briefIdx)
 
-    # start = briefIdx[0]
-    # briefs=[]
-    # for idx in briefIdx:
-    #     if idx == start:
-    #         briefs.append(block[idx])
-    #     else:
-    #         break
-    #     start +=1
+    assert valid(blocks)
 
-    # brief = extractBrief(briefs)
-
-    # if len(enumEle) > 0 :
-    #     writeEnumToFile(brief, enumName, enumEle, fout)
+    items = extractStructEle(blocks)
+    print("struct items = ", items);

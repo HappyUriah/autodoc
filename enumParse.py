@@ -14,6 +14,12 @@ def isEnum(strs):
         return True
     return False
 
+def rmComment(line):
+    if line.find("//") != -1 :
+        return line[:line.find("//")]
+    else :
+        return line
+
 #提取描述信息
 def extractBrief(blocks) :
     word="\\brief "
@@ -49,10 +55,10 @@ def valid(blocks) :
     for line in blocks:
         line = line.strip()
         if line.startswith("//"):
-            pass
+            continue
         else :
-            line = line[:line.find("//")].strip()
-            if line.count(",") + line.count("{") + line.count("}") > 2:
+            line = rmComment(line).strip()
+            if line.count(",") + line.count("{") + line.count("}") > 1:
                 print("wrong format!!!!,请注意换行")
                 return False
             elif line.count(",") == 1 and not line.endswith(","):
@@ -62,11 +68,7 @@ def valid(blocks) :
     
     return True
 
-def rmComment(line):
-    if line.find("//") != -1 :
-        return line[:line.find("//")]
-    else :
-        return line
+
 
 
 def extractEnumEle(blocks) :
@@ -77,7 +79,7 @@ def extractEnumEle(blocks) :
     for i in range(0,num):
         line = blocks[i].strip()
         if line.startswith("//"):
-            pass
+            continue
         else :
             #print(line)
             line = rmComment(line)
@@ -99,7 +101,7 @@ def extractEnumEle(blocks) :
     for i in range(start + 1, end):
         line = blocks[i].strip()
         if not line or line.startswith("//"):
-            pass
+           continue
 
         assert line.find(keyword) != -1
         des = line[line.find(keyword) + len(keyword): ]
@@ -146,4 +148,5 @@ def ansisEnumBlock(strs, blocks):
     assert valid(blocks)
 
     items = extractEnumEle(blocks)
+    print("enum items = ", items);
     

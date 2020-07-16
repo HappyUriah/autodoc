@@ -14,18 +14,7 @@ def isStatement(line) :
     #return eles[0] == "enum" or (eles[0] == "typedef " and eles[1] == "enum")
 
 
-def isStruct(strs):
-    eles = strs.split()
-    print(eles)
 
-    if len(eles) < 3:
-        return False
-    
-    if eles[0] == "struct":
-        return True
-    if eles[0] == "typedef" and eles[1] == "struct" :
-        return True
-    return False
 
 def isClass(strs):
 
@@ -45,9 +34,9 @@ def ansisBlock(strs, blocks):
         pass
         #classParse.ansisClassBlock(strs, blocks)
     
-    elif isStruct(strs):
-        pass
-        #struct.ansisStructBlock(strs,blocks)
+    elif struct.isStruct(strs):
+        
+        struct.ansisStructBlock(strs,blocks)
     
     elif func.isFunction(strs):
         pass
