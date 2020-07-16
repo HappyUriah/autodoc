@@ -3,6 +3,15 @@
 
 keyword=("\\brief", "\\param", "\\return", "\\tparam")
 
+cKeywork=("const", "explicit", "default", "static")
+
+#是否是函数声明
+def isFunction(strs):
+    if "(" in strs and ")" in strs:
+        return True
+    else :
+        return False
+
 #是否注释
 def isComment(line):
     if line.strip().startswith("/") or line.strip().startswith("*"):
@@ -77,6 +86,7 @@ def extractCommentParams(block) :
     kvs = []
     for param in params:
         #print(param)
+        assert param.find(' ') != -1
         tup = (param[: param.find(' ')].strip(), param[param.find(' ') + 1:].strip(' \n\t-'))
         kvs.append(tup)
                 
@@ -88,7 +98,7 @@ def extractCommentParams(block) :
 
 def extractCommentRet(block) : 
 
-    word = "\\return "
+    word = " \\return "
     
     retrval = ""
     start = -1
@@ -107,8 +117,8 @@ def extractCommentRet(block) :
             
 
         elif id == start and  not isContainKeyword(block[id]) and line.startswith("//") :
-            start +=1
-            retrval += retrval.strip('/')
+            start = start + 1
+            retrval += line.strip('/')
     
     if len(retrval.strip()) > 0:
         rets.append(retrval.strip())
@@ -120,9 +130,19 @@ def extractCommentRet(block) :
 
 #是否有返回值
 def hasReturnValue(strs):
+
     delParam = strs[:strs.rfind('(')]
     eles = delParam.split()
-    retVal = eles[len(eles) - 2].strip()
+
+    print("return num = ", len(eles))
+    num = len(eles)
+    retVal = "void"
+    if num > 1 :
+        retVal = eles[len(eles) - 2].strip()
+    
+    if retVal in cKeywork:
+        retVal = "void"
+
     print("retVal = ", retVal)
     return retVal != "void"
   
@@ -149,10 +169,13 @@ def parseParamsItem(params) :
     #print(ps)
     kv = []
     for param in ps:
-        if len(param.strip()) > 0 and "[" not in param:
+        param = param.strip()
+        if len(param) > 0 and "[" not in param:
+            assert param.find(' ') != -1
             tup = (param[:param.rfind(' ')].strip(), param[param.rfind(' '):].strip())
             kv.append(tup)
         elif len(param.strip()) > 0 and "["  in param:
+            assert param.find(' ') != -1
             tup = (param[:param.rfind(' ')].strip() + "[]", param[param.rfind(' '): param.rfind('[')].strip())
             kv.append(tup)
     
@@ -177,7 +200,7 @@ def mergeParams(commentParams, params):
                 resultVals.append(tvd)
                 break
 
-    #print(resultVals)
+    print(resultVals)
 
     
     assert len(commentParams) == len(resultVals)
@@ -188,6 +211,10 @@ def mergeParams(commentParams, params):
 
 
 def ansisFunctionBlock(strs, blocks):
+
+    pos = strs.find('{')
+    if pos != -1:
+        strs = strs[:pos]
     print("is function")
    
     # commentParams = extractCommentParams(block)

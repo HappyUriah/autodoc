@@ -45,11 +45,7 @@ def isClass(strs):
     else :
         return False
 
-def isFunction(strs):
-    if "(" in strs and ")" in strs:
-        return True
-    else :
-        return False
+
 
 
 def ansisBlock(strs, blocks):
@@ -62,7 +58,7 @@ def ansisBlock(strs, blocks):
     elif isStruct(strs):
         struct.ansisStructBlock(strs,blocks)
     
-    elif isFunction(strs):
+    elif func.isFunction(strs):
         func.ansisFunctionBlock(strs, blocks)
 
         #print("is enum")

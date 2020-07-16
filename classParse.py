@@ -6,12 +6,10 @@ def isComment(line):
 def isStatement(line) :
     return line.strip().endswith(';')
 
-# def ansisBlock(strs, blocks):
-    # if isEnum(strs):
+def ansisBlock(strs, blocks):
+    if func.isFunction(strs):
+        func.ansisFunctionBlock(strs, blocks)
 
-    #     enum.ansisEnumBlock(strs, blocks)
-    # elif isClass(strs):
-    #     classParse.ansisClassBlock(strs, blocks)
 
 def ansisClassBlock(strs, blocks):
     print("is class")
@@ -41,7 +39,7 @@ def ansisClassBlock(strs, blocks):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                # ansisBlock(strs, blocks)
+                ansisBlock(newstrs, newblocks)
 
                 newstrs=""
                 newblocks.clear()
@@ -53,7 +51,7 @@ def ansisClassBlock(strs, blocks):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                # ansisBlock(strs, blocks)
+                ansisBlock(newstrs, newblocks)
 
                 newstrs=""
                 newblocks.clear()
