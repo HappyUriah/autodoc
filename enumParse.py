@@ -1,28 +1,38 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+def isEnum(strs):
+    eles = strs.split()
+    print(eles)
 
+    if len(eles) < 3:
+        return False
+    
+    if eles[0] == "enum":
+        return True
+    if eles[0] == "typedef" and eles[1] == "enum" :
+        return True
+    return False
+
+#提取描述信息
 def extractBrief(blocks) :
+    word="\\brief "
     brief = ""
-    hasBrief = 0
+    start = -1
+    num = len(blocks)
+    for id in range(0, num):
+        line = blocks[id].strip()
+        if word in line :
+            start = id + 1
+            brief += line[line.find(word) + len(word):]
+        elif id == start and   line.startswith("//") :
+            start +=1
+            brief += line.strip('/')
 
-    for line in blocks:
-
-        line = line.strip()
-        if line.startswith('/// ') and line.find("\\brief") != -1:
-            hasBrief = 1
-            brief += line[line.find('\\brief') + len('\\brief'):].strip()
-
-        elif line.startswith('///') and hasBrief == 1 :
-            brief += line.strip('/\n ')
-        
-        elif hasBrief == 1 :
-            break
-        else :
-            pass
-       
+    #print("brief = " , brief)
     return brief
 
+#解析枚举名称
 def extractName(strs) :
     eles = strs.split()
     if eles[0] == "enum" and eles[1] == "class" :
@@ -34,52 +44,80 @@ def extractName(strs) :
     else :
         return eles[-1][:-1].strip('{};')
 
-
-def findItemComment(item, blocks) :
-    item = item.strip()
-    eles = item.split(",")
+# 校验合法性，主要判断是否存在多行项
+def valid(blocks) :
     for line in blocks:
-        if line.find(item) != -1 :
+        line = line.strip()
+        if line.startswith("//"):
+            pass
+        else :
+            line = line[:line.find("//")].strip()
+            if line.count(",") + line.count("{") + line.count("}") > 2:
+                print("wrong format!!!!,请注意换行")
+                return False
+            elif line.count(",") == 1 and not line.endswith(","):
+                print("wrong format!!!!,请注意换行")
+                return False
+          
+    
+    return True
+
+def rmComment(line):
+    if line.find("//") != -1 :
+        return line[:line.find("//")]
+    else :
+        return line
+
+
+def extractEnumEle(blocks) :
+
+    start = -1
+    end = -1
+    num = len(blocks)
+    for i in range(0,num):
+        line = blocks[i].strip()
+        if line.startswith("//"):
+            pass
+        else :
+            #print(line)
+            line = rmComment(line)
+            #print(line)
+            if "{" in line:
+                start = i
+                #print("start = ", start)
+            elif "}" in line:
+                end = i
+    #print("start = ", start)
+    #print("end = ", end)
+    
+    assert start != -1
+    assert end != -1
+    assert start < end
+
+    keyword = '///<'
+    items = []
+    for i in range(start + 1, end):
+        line = blocks[i].strip()
+        if not line or line.startswith("//"):
+            pass
+
+        assert line.find(keyword) != -1
+        des = line[line.find(keyword) + len(keyword): ]
+        assert des
+        line = rmComment(line)
+        strs = line.split()
+
+        #print(strs)
+        assert   len(strs) > 2
         
-            otherEles = line.split(",")
-         #   print(item, line, otherEles)
-            assert item == otherEles[0].strip()
+        key = strs[0];
+        value = strs[2].strip(',')
+        kvd=(key,value, des)
+        items.append(kvd)
 
-            assert otherEles[0].find('///<') != -1 or otherEles[1].find('///<') != -1
-
-            if otherEles[0].find('///<') != -1:
-                return otherEles[0][otherEles[0].find('///<') + 4:].strip() 
-            elif otherEles[1].find('///<') != -1 :
-                return otherEles[1][otherEles[1].find('///<') + 4:].strip() 
+    return items
 
 
-
-def extractEnumEle(strs, blocks) :
-
-    strs = strs[strs.find('{') + 1 : strs.find('}')]
-  #  print(strs)
-    items = strs.split(',')
-   # print(items)
-    for item in items:
-        print(item)
-        eles = item.split()
-        assert len(eles) == 3 or len(eles) == 0
-
-        if len(eles) == 3 :
-            comment = findItemComment(item, blocks)
-            print(comment)
-    
-    # keyword = '///<'
-    # des = line[line.find(keyword) + len(keyword): ]
-    # strs = line.split()
-    # key = strs[0];
-
-    # if strs[1].strip() == "=" :
-    #     value = strs[2].strip(',')
-    # else :
-    #     value = strs[1][1:].strip(',')
-    
-    # return key, value, des
     
 def writeEnumToFile(brief, name, ele, f) :
     f.write('\n\n### ' + name + '\n')
@@ -96,44 +134,16 @@ def writeEnumToFile(brief, name, ele, f) :
 
 
 def ansisEnumBlock(strs, blocks):
+
     name = extractName(strs).strip()
     print("name = ", name);
     assert name
+
     brief = extractBrief(blocks)
     print("brief = ", brief)
     assert brief
-    extractEnumEle(strs, blocks)
-    # num = len(block)
-    # enumName = extractName(block[num-1])
-    # enumEle = []
-    # print(enumName)
-    # briefIdx = []
-    # for idx in range(0, num):
-    #     line = block[idx]
-    #     if "\\brief" in line:
-    #         print(idx)
-    #         briefIdx.append(idx)
-    #     elif line.strip().startswith('///') :
-    #         briefIdx.append(idx);
-    #     elif '///<' in line and not line.startswith('//'):
-    #         key,value,des = extractEnumEle(line)
-    #         enumEle.append(key)
-    #         enumEle.append(value)
-    #         enumEle.append(des)
-    #         print(key,value, des)
+
+    assert valid(blocks)
+
+    items = extractEnumEle(blocks)
     
-    # print(briefIdx)
-
-    # start = briefIdx[0]
-    # briefs=[]
-    # for idx in briefIdx:
-    #     if idx == start:
-    #         briefs.append(block[idx])
-    #     else:
-    #         break
-    #     start +=1
-
-    # brief = extractBrief(briefs)
-
-    # if len(enumEle) > 0 :
-    #     writeEnumToFile(brief, enumName, enumEle, fout)

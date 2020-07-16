@@ -10,18 +10,7 @@ def isComment(line):
 def isStatement(line) :
     return line.strip().endswith(';')
 
-def isEnum(strs):
-    eles = strs.split()
-    print(eles)
 
-    if len(eles) < 3:
-        return False
-    
-    if eles[0] == "enum":
-        return True
-    if eles[0] == "typedef" and eles[1] == "enum" :
-        return True
-    return False
     #return eles[0] == "enum" or (eles[0] == "typedef " and eles[1] == "enum")
 
 
@@ -49,17 +38,20 @@ def isClass(strs):
 
 
 def ansisBlock(strs, blocks):
-    if isEnum(strs):
+    if enum.isEnum(strs):
 
         enum.ansisEnumBlock(strs, blocks)
     elif isClass(strs):
-        classParse.ansisClassBlock(strs, blocks)
+        pass
+        #classParse.ansisClassBlock(strs, blocks)
     
     elif isStruct(strs):
-        struct.ansisStructBlock(strs,blocks)
+        pass
+        #struct.ansisStructBlock(strs,blocks)
     
     elif func.isFunction(strs):
-        func.ansisFunctionBlock(strs, blocks)
+        pass
+        #func.ansisFunctionBlock(strs, blocks)
 
         #print("is enum")
 
