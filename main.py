@@ -7,7 +7,9 @@ import delMacro as macro
 
 mediaFile = "starComment.h"
 
-os.remove(mediaFile)
+if os.path.exists(mediaFile):
+    os.remove(mediaFile)
+
 intput = sys.argv[1] + ""
 print(type(input))
 
@@ -15,6 +17,7 @@ starComment.rmStarComment(sys.argv[1], mediaFile)
 input = mediaFile
 output = "output.md"
 macro.rmMacroAndAnsis(mediaFile, output)
+os.remove(mediaFile)
 
 
 

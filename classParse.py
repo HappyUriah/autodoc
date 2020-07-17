@@ -25,17 +25,54 @@ def rmComment(line):
     else :
         return line
 
-def ansisBlock(strs, blocks,fout):
+def ansisBlock(strs, blocks,fout, clsname):
     if func.isFunction(strs):
-        func.ansisFunctionBlock(strs, blocks, fout)
+        func.ansisFunctionBlock(strs, blocks, fout, clsname)
     elif enum.isEnum(strs):
-        enum.ansisEnumBlock(strs, blocks,fout)
+        enum.ansisEnumBlock(strs, blocks,fout, clsname)
     elif struct.isStruct(strs):
-        struct.ansisStructBlock(strs, blocks, fout)
+        struct.ansisStructBlock(strs, blocks, fout, clsname)
     elif isClass(strs):
         ansisClassBlock(strs, blocks,fout)
     else :
         other.ansisOtherBlock(strs, blocks)
+
+def extractClassName(line):
+    return line.split()[1]
+
+keyword=("\\brief", "\\param", "\\return", "\\tparam")
+def isContainKeyword(line) :
+    for word in keyword:
+        if word in line:
+            return True
+    
+    return False
+
+def extractClassBrief(blocks, nonCommentline):
+    word="\\brief "
+    brief = ""
+    start = -1
+    #num = len(block)
+    for id in range(0, nonCommentline):
+        line = blocks[id].strip()
+        if word in line :
+            start = id + 1
+            brief += line[line.find(word) + len(word):]
+        elif id == start and  not isContainKeyword(blocks[id]) and line.startswith("//") :
+            start +=1
+            brief += line.strip('/')
+
+    #print("brief = " , brief)
+    return brief
+
+def writeClassToFile(clsname, brief, fout):
+    fout.write('## ' + clsname + '\n\n')
+    fout.write('*类描述*\n\n')
+
+    assert  brief.strip()
+    fout.write(brief + "\n")
+
+    fout.write('\n\n')
 
 
 def ansisClassBlock(strs, blocks, fout):
@@ -52,7 +89,15 @@ def ansisClassBlock(strs, blocks, fout):
 
     print("blocks[start] = ", blocks[start])
 
+
+
     assert blocks[start].find('{') != -1 and  blocks[start].find('}') == -1
+
+    classname = extractClassName(blocks[start])
+    brief = extractClassBrief(blocks, start)
+
+    writeClassToFile(classname, brief, fout)
+
     newblocks=[]
     newstrs=""
     for i in range(1 + start, num):
@@ -66,7 +111,7 @@ def ansisClassBlock(strs, blocks, fout):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                ansisBlock(newstrs, newblocks, fout)
+                ansisBlock(newstrs, newblocks, fout, classname)
 
                 newstrs=""
                 newblocks.clear()
@@ -78,7 +123,7 @@ def ansisClassBlock(strs, blocks, fout):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                ansisBlock(newstrs, newblocks,fout)
+                ansisBlock(newstrs, newblocks,fout, classname)
 
                 newstrs=""
                 newblocks.clear()

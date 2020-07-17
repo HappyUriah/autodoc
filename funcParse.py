@@ -218,7 +218,7 @@ def mergeParams(commentParams, params):
 
 def writeFunctionToFile(funcname, body, brief, mergeParamItems, commentRets, fout):
     fout.write('## ' + funcname + '\n\n')
-    fout.write('*方法*\n```c++\n\n')
+    fout.write('*方法*\n```c++\n')
     fout.write(body)
     fout.write('\n```\n*功能描述*\n\n')
     fout.write(brief + "\n")
@@ -236,7 +236,7 @@ def writeFunctionToFile(funcname, body, brief, mergeParamItems, commentRets, fou
         fout.write("\n\n")
 
         for ret in commentRets :
-            fout.write(ret +" ")
+            fout.write(ret +" \n\n")
 
     fout.write('\n\n')
 
@@ -244,7 +244,7 @@ def writeFunctionToFile(funcname, body, brief, mergeParamItems, commentRets, fou
 
 def ansisFunctionBlock(strs, blocks, fout, classname=None):
 
-    strs = parseBody(strs)
+    strs = parseBody(strs).strip()
 
     # pos = strs.find('{')
     # if pos != -1:
@@ -265,6 +265,8 @@ def ansisFunctionBlock(strs, blocks, fout, classname=None):
 
     funcname = parseFuncName(strs)
     print("funcname = ", funcname)
+    if classname :
+        funcname = classname+"::"+funcname
 
     hasRetV = hasReturnValue(strs)
 
