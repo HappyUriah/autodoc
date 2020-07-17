@@ -144,9 +144,18 @@ def extractStructEle(blocks) :
 
     return items
 
+def writeStructToFile(brief, name, items, f) :
+    f.write('\n\n### ' + name + '\n\n')
+    f.write('*结构体描述*\n\n')
+    f.write(brief + '\n\n')
+    f.write("| 类型      |    变量 | 描述  |\n| :-------- | --------:| :--: |\n")
+   
+    
+    for item in items:
+        f.write("|" + item[0] + "|" + item[1] + "|" + item[2] + "|\n")
 
 
-def ansisStructBlock(strs, blocks):
+def ansisStructBlock(strs, blocks, fout, classname=None):
     name = extractName(strs).strip()
     print("name = ", name);
     assert name
@@ -158,3 +167,4 @@ def ansisStructBlock(strs, blocks):
 
     items = extractStructEle(blocks)
     print("struct items = ", items);
+    writeStructToFile(brief, name, items, fout)

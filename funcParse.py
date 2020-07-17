@@ -146,6 +146,14 @@ def hasReturnValue(strs):
     print("retVal = ", retVal)
     return retVal != "void"
   
+def parseBody(strs):
+    pos1 = strs.find(";")
+    pos2 = strs.find("{")
+
+    if pos2 != -1 :
+        return strs[0:pos2]
+    else :
+        return strs[0:pos1]
        
 # 解析实际参数
 def parseRealParams(strs) :
@@ -207,15 +215,41 @@ def mergeParams(commentParams, params):
             
     return resultVals
 
-    
+
+def writeFunctionToFile(funcname, body, brief, mergeParamItems, commentRets, fout):
+    fout.write('## ' + funcname + '\n\n')
+    fout.write('*方法*\n```c++\n\n')
+    fout.write(body)
+    fout.write('\n```\n*功能描述*\n\n')
+    fout.write(brief + "\n")
+
+    if len(mergeParamItems) > 0 :
+        fout.write('\n\n*参数说明*\n\n')
+        fout.write("| 参数      |    类型 | 描述  |\n| :-------- | --------:| :--: |\n")
+   
+   
+    for p in mergeParamItems:
+        fout.write("|" + p[0] + "|" + p[1] + "|" + p[2] + "|\n")
+
+    if commentRets and len(commentRets) > 0 :
+        fout.write('\n*返回值* ')
+        fout.write("\n\n")
+
+        for ret in commentRets :
+            fout.write(ret +" ")
+
+    fout.write('\n\n')
 
 
-def ansisFunctionBlock(strs, blocks):
 
-    pos = strs.find('{')
-    if pos != -1:
-        strs = strs[:pos]
-    print("is function")
+def ansisFunctionBlock(strs, blocks, fout, classname=None):
+
+    strs = parseBody(strs)
+
+    # pos = strs.find('{')
+    # if pos != -1:
+    #     strs = strs[:pos]
+    print("is function", strs)
    
     # commentParams = extractCommentParams(block)
     # rets = extractCommentRet(block)
@@ -245,37 +279,12 @@ def ansisFunctionBlock(strs, blocks):
 
     if hasRetV :
         assert len(commentRets) > 0
+        writeFunctionToFile(funcname, strs, brief, mergeParamItems, commentRets, fout)
+    else :
+        writeFunctionToFile(funcname, strs, brief, mergeParamItems, None, fout)
+    
 
-    # body = extractBody(block)
-    # funcname = parseFuncName(body).strip("()*")
-    # print(funcname)
-    # params = parseParams(parseBody(body))
 
-    # print(params)
-    # resultParams = mergeParams(commentParams, params)
 
-    # fout.write('## ' + funcname + '\n\n')
-    # fout.write('*方法*\n```c++\n\n')
-    # fout.write(body)
-    # fout.write('\n```\n*功能描述*\n\n')
-    # fout.write(brief + "\n")
-
-    # if len(resultParams) > 0 :
-    #     fout.write('\n\n*参数说明*\n\n')
-    #     fout.write("| 参数      |    类型 | 描述  |\n| :-------- | --------:| :--: |\n")
-   
-   
-    # for p in resultParams:
-    #     fout.write("|" + p[0] + "|" + p[1] + "|" + p[2] + "|\n")
-
-    # if len(rets) > 0 :
-    #     fout.write('\n*返回值* ')
-    #     fout.write("\n\n")
-
-    # for ret in rets :
-    #     fout.write(ret +" ")
-
-    # fout.write('\n\n')
-    # print(body)
 
     

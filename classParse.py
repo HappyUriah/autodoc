@@ -7,7 +7,10 @@ def isComment(line):
     return line.strip().startswith('//')
 
 def isStatement(line) :
-    return line.strip().endswith(';')
+    if line.find('//') != -1 :
+        return line[0:line.find('//')].strip().endswith(";")
+    else :
+        return line.strip().endswith(';')
 
 def isClass(strs):
 
@@ -16,20 +19,20 @@ def isClass(strs):
     else :
         return False
 
-def ansisBlock(strs, blocks):
+def ansisBlock(strs, blocks,fout):
     if func.isFunction(strs):
-        func.ansisFunctionBlock(strs, blocks)
+        func.ansisFunctionBlock(strs, blocks, fout)
     elif enum.isEnum(strs):
-        enum.ansisEnumBlock(strs, blocks)
+        enum.ansisEnumBlock(strs, blocks,fout)
     elif struct.isStruct(strs):
-        struct.ansisStructBlock(strs, blocks)
+        struct.ansisStructBlock(strs, blocks, fout)
     elif isClass(strs):
-        ansisClassBlock(strs, blocks)
+        ansisClassBlock(strs, blocks,fout)
     else :
         other.ansisOtherBlock(strs, blocks)
 
 
-def ansisClassBlock(strs, blocks):
+def ansisClassBlock(strs, blocks, fout):
     print("is class")
     num = len(blocks)
 
@@ -57,7 +60,7 @@ def ansisClassBlock(strs, blocks):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                ansisBlock(newstrs, newblocks)
+                ansisBlock(newstrs, newblocks, fout)
 
                 newstrs=""
                 newblocks.clear()
@@ -69,7 +72,7 @@ def ansisClassBlock(strs, blocks):
                 print(newstrs)
                 print("###")
                 print(newblocks)
-                ansisBlock(newstrs, newblocks)
+                ansisBlock(newstrs, newblocks,fout)
 
                 newstrs=""
                 newblocks.clear()

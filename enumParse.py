@@ -121,21 +121,21 @@ def extractEnumEle(blocks) :
 
 
     
-def writeEnumToFile(brief, name, ele, f) :
+def writeEnumToFile(brief, name, items, f) :
     f.write('\n\n### ' + name + '\n')
     f.write('*枚举描述*\n\n')
     f.write(brief + '\n\n')
     f.write("|枚举名      |    枚举值 | 描述  |\n| :-------- | --------:| :--: |\n")
    
-    cnt = (int)(len(ele) / 3)
-    for i in range(0, cnt):
-        f.write("|" + ele[3 *i] + "|" + ele[3 * i + 1] + "|" + ele[3 * i + 2] + "|\n")
+    #cnt = len(ele)
+    for item in items:
+        f.write("|" + item[0] + "|" + item[1] + "|" + item[2] + "|\n")
   
 
 
 
 
-def ansisEnumBlock(strs, blocks):
+def ansisEnumBlock(strs, blocks, fout, classname=None):
 
     name = extractName(strs).strip()
     print("name = ", name);
@@ -149,4 +149,6 @@ def ansisEnumBlock(strs, blocks):
 
     items = extractEnumEle(blocks)
     print("enum items = ", items);
+
+    writeEnumToFile(brief, name, items, fout)
     
