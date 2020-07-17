@@ -19,6 +19,12 @@ def isClass(strs):
     else :
         return False
 
+def rmComment(line):
+    if line.find("//") != -1 :
+        return line[:line.find("//")]
+    else :
+        return line
+
 def ansisBlock(strs, blocks,fout):
     if func.isFunction(strs):
         func.ansisFunctionBlock(strs, blocks, fout)
@@ -55,7 +61,7 @@ def ansisClassBlock(strs, blocks, fout):
             newblocks.append(line)
         elif isStatement(line):
             newblocks.append(line)
-            newstrs = newstrs + line[:line.find('//')]
+            newstrs = newstrs + rmComment(line)
             if newstrs.count("{") == newstrs.count("}") :
                 print(newstrs)
                 print("###")
@@ -67,7 +73,7 @@ def ansisClassBlock(strs, blocks, fout):
                 print('\n###################\n\n\n\n')
         else :
             newblocks.append(line)
-            newstrs = newstrs + line[:line.find('//')]
+            newstrs = newstrs + rmComment(line)
             if newstrs.count("{") == newstrs.count("}") and newstrs.count('{') > 0 :
                 print(newstrs)
                 print("###")
@@ -77,4 +83,11 @@ def ansisClassBlock(strs, blocks, fout):
                 newstrs=""
                 newblocks.clear()
                 print('\n###################\n\n\n\n')
+        
+        if newstrs.count('{') < newstrs.count("}") :
+            newstrs = ""
+            newblocks.clear()
+            print('\n###################\n\n\n\n')
+
+            
 

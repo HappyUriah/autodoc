@@ -17,6 +17,12 @@ def isStatement(line) :
     else :
         return line.strip().endswith(';')
 
+def rmComment(line):
+    if line.find("//") != -1 :
+        return line[:line.find("//")]
+    else :
+        return line
+
 
 def ansisBlock(strs, blocks, fout):
     if enum.isEnum(strs):
@@ -65,7 +71,7 @@ def rmMacroAndAnsis(input,output):
             blocks.append(line)
         elif isStatement(line):
             blocks.append(line)
-            strs = strs + line[:line.find('//')]
+            strs = strs + rmComment(line)
             if strs.count("{") == strs.count("}") :
                 print(strs)
                 print("###")
@@ -77,7 +83,28 @@ def rmMacroAndAnsis(input,output):
                 print('\n###################\n\n\n\n')
         else :
             blocks.append(line)
-            strs = strs + line[:line.find('//')]
+            strs = strs + rmComment(line)
+            if strs.count("{") == strs.count("}") and strs.count("{") > 0:
+                print(strs)
+                print("###")
+                print(blocks)
+                ansisBlock(strs, blocks, fout)
+
+                strs=""
+                blocks.clear()
+                print('\n###################\n\n\n\n')
+        
+
+        if strs.count("{") < strs.count("}") :
+            print(strs)
+            strs=""
+            blocks.clear()
+            
+            print('\n###################\n\n\n\n')
+
+
+
+
 
     fout.close()
 
