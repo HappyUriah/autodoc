@@ -12,7 +12,7 @@ def containsKeyWord(strs):
 
 def valid(strs, blocks):
     if strs.count(',') > 0 :
-        print("wrong format!!!!,请注意换行")
+        print("\033[31m%s" % strs + "请注意换行")
         return False
 
     found = False

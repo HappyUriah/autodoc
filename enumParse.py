@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import common as comm
+
 def isEnum(strs):
     eles = strs.split()
     print(eles)
@@ -92,6 +94,7 @@ def extractEnumEle(blocks) :
     #print("start = ", start)
     #print("end = ", end)
     
+    
     assert start != -1
     assert end != -1
     assert start < end
@@ -103,14 +106,14 @@ def extractEnumEle(blocks) :
         if not line or line.startswith("//"):
            continue
 
-        assert line.find(keyword) != -1
+        comm.assertStr(line.find(keyword) != -1, line +"需要注释")
         des = line[line.find(keyword) + len(keyword): ]
-        assert des
+        comm.assertStr(des, line + "需要注释")
         line = rmComment(line)
         strs = line.split()
 
         #print(strs)
-        assert   len(strs) > 2
+        comm.assertStr(len(strs) > 2, "枚举项格式为 *a = 1 ///< a*")
         
         key = strs[0];
         value = strs[2].strip(',')
@@ -139,11 +142,14 @@ def ansisEnumBlock(strs, blocks, fout, classname=None):
 
     name = extractName(strs).strip()
     print("name = ", name);
-    assert name
+    comm.assertStr(name, "枚举名不能为空")
+    #assert name
 
     brief = extractBrief(blocks)
     print("brief = ", brief)
-    assert brief
+    comm.assertStr(brief, "枚举描述不能为空")
+    #assert brief
+
 
     assert valid(blocks)
 

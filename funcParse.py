@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import common as comm
 
 keyword=("\\brief", "\\param", "\\return", "\\tparam")
 
@@ -194,7 +195,7 @@ def parseParamsItem(params) :
 def mergeParams(commentParams, params):
 
     
-    assert len(commentParams) == len(params) 
+    comm.assertStr(len(commentParams) == len(params), "参数和注释信息不符合") 
         
     
     resultVals=[]
@@ -211,7 +212,7 @@ def mergeParams(commentParams, params):
     print(resultVals)
 
     
-    assert len(commentParams) == len(resultVals)
+    comm.assertStr(len(commentParams) == len(resultVals), "参数和注释信息不符合")
             
     return resultVals
 
@@ -254,7 +255,7 @@ def ansisFunctionBlock(strs, blocks, fout, classname=None):
     # commentParams = extractCommentParams(block)
     # rets = extractCommentRet(block)
     brief = extractBrief(blocks)
-    assert brief
+    comm.assertStr(brief, "无描述信息")
     print("brief = ", brief)
 
     realParams = parseRealParams(strs)

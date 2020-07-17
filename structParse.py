@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
+import common as comm
+
 def isStruct(strs):
     eles = strs.split()
     print(eles)

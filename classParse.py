@@ -2,6 +2,7 @@ import funcParse as func
 import enumParse as enum
 import structParse as struct
 import otherParse as other
+import common as com
 
 def isComment(line):
     return line.strip().startswith('//')
@@ -69,7 +70,7 @@ def writeClassToFile(clsname, brief, fout):
     fout.write('## ' + clsname + '\n\n')
     fout.write('*类描述*\n\n')
 
-    assert  brief.strip()
+    com.assertStr(brief, clsname  + "无描述信息")
     fout.write(brief + "\n")
 
     fout.write('\n\n')
@@ -89,9 +90,10 @@ def ansisClassBlock(strs, blocks, fout):
 
     print("blocks[start] = ", blocks[start])
 
+    desc = blocks[start].strip() + " 行应该跟{，请注意代码格式"
 
-
-    assert blocks[start].find('{') != -1 and  blocks[start].find('}') == -1
+    com.assertStr(blocks[start].find('{') != -1 and  blocks[start].find('}') == -1, desc)
+  
 
     classname = extractClassName(blocks[start])
     brief = extractClassBrief(blocks, start)

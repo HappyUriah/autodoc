@@ -5,6 +5,7 @@ import os
 import delstarComment as starComment
 import delMacro as macro
 
+
 mediaFile = "starComment.h"
 
 if os.path.exists(mediaFile):
