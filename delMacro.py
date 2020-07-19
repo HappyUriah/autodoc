@@ -4,24 +4,9 @@ import structParse as struct
 import funcParse as func
 import classParse 
 import otherParse as other
+import common as comm
 
 
-def isComment(line):
-    return line.strip().startswith('//')
-
-
-def isStatement(line) :
-
-    if line.find('//') != -1 :
-        return line[0:line.find('//')].strip().endswith(";")
-    else :
-        return line.strip().endswith(';')
-
-def rmComment(line):
-    if line.find("//") != -1 :
-        return line[:line.find("//")]
-    else :
-        return line
 
 
 def ansisBlock(strs, blocks, fout):
@@ -67,11 +52,11 @@ def rmMacroAndAnsis(input,output):
 
 
     for line in newlines:
-        if isComment(line):
+        if comm.isComment(line):
             blocks.append(line)
-        elif isStatement(line):
+        elif comm.isStatement(line):
             blocks.append(line)
-            strs = strs + rmComment(line)
+            strs = strs + comm.rmComment(line)
             if strs.count("{") == strs.count("}") :
                 print(strs)
                 print("###")
@@ -83,7 +68,7 @@ def rmMacroAndAnsis(input,output):
                 print('\n###################\n\n\n\n')
         else :
             blocks.append(line)
-            strs = strs + rmComment(line)
+            strs = strs + comm.rmComment(line)
             if strs.count("{") == strs.count("}") and strs.count("{") > 0:
                 print(strs)
                 print("###")

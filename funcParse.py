@@ -230,7 +230,7 @@ def writeFunctionToFile(funcname, body, brief, mergeParamItems, commentRets, fou
    
    
     for p in mergeParamItems:
-        fout.write("|" + p[0] + "|" + p[1] + "|" + p[2] + "|\n")
+        fout.write("|" + p[1] + "|" + p[0] + "|" + p[2] + "|\n")
 
     if commentRets and len(commentRets) > 0 :
         fout.write('\n*返回值* ')

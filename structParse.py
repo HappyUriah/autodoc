@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import common as comm
 
 import common as comm
 
@@ -16,11 +17,7 @@ def isStruct(strs):
         return True
     return False
 
-def rmComment(line):
-    if line.find("//") != -1 :
-        return line[:line.find("//")]
-    else :
-        return line
+
 
 #提取描述信息 
 def extractBrief(blocks) :
@@ -58,7 +55,7 @@ def valid(blocks) :
         if line.startswith("//"):
             continue
         else :
-            line = rmComment(line).strip()
+            line = comm.rmComment(line).strip()
             if line.count("{") + line.count(";") > 1:
                 print("wrong format!!!!,请注意换行")
                 return False
@@ -106,7 +103,7 @@ def extractStructEle(blocks) :
         if line.startswith("//"):
             continue
         else :
-            line = rmComment(line)
+            line = comm.rmComment(line)
             if "{" in line:
                 start = i
              
@@ -131,7 +128,7 @@ def extractStructEle(blocks) :
         assert line.find(keyword) != -1
         des = line[line.find(keyword) + len(keyword): ]
         assert des
-        note = rmComment(line)
+        note = comm.rmComment(line)
        
         if '[' in note :
             # 数组

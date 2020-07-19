@@ -2,16 +2,9 @@ import funcParse as func
 import enumParse as enum
 import structParse as struct
 import otherParse as other
-import common as com
+import common as comm
 
-def isComment(line):
-    return line.strip().startswith('//')
 
-def isStatement(line) :
-    if line.find('//') != -1 :
-        return line[0:line.find('//')].strip().endswith(";")
-    else :
-        return line.strip().endswith(';')
 
 def isClass(strs):
 
@@ -20,11 +13,7 @@ def isClass(strs):
     else :
         return False
 
-def rmComment(line):
-    if line.find("//") != -1 :
-        return line[:line.find("//")]
-    else :
-        return line
+
 
 def ansisBlock(strs, blocks,fout, clsname):
     if func.isFunction(strs):
@@ -70,7 +59,7 @@ def writeClassToFile(clsname, brief, fout):
     fout.write('## ' + clsname + '\n\n')
     fout.write('*类描述*\n\n')
 
-    com.assertStr(brief, clsname  + "无描述信息")
+    comm.assertStr(brief, clsname  + "类  无描述信息")
     fout.write(brief + "\n")
 
     fout.write('\n\n')
@@ -83,7 +72,7 @@ def ansisClassBlock(strs, blocks, fout):
     start = 0
     for i in range(0, num):
         line = blocks[i].strip()
-        if line and not isComment(line):
+        if line and not comm.isComment(line):
             start = i;
             break
     
@@ -92,7 +81,7 @@ def ansisClassBlock(strs, blocks, fout):
 
     desc = blocks[start].strip() + " 行应该跟{，请注意代码格式"
 
-    com.assertStr(blocks[start].find('{') != -1 and  blocks[start].find('}') == -1, desc)
+    comm.assertStr(blocks[start].find('{') != -1 and  blocks[start].find('}') == -1, desc)
   
 
     classname = extractClassName(blocks[start])
@@ -104,11 +93,11 @@ def ansisClassBlock(strs, blocks, fout):
     newstrs=""
     for i in range(1 + start, num):
         line = blocks[i]
-        if isComment(line):
+        if comm.isComment(line):
             newblocks.append(line)
-        elif isStatement(line):
+        elif comm.isStatement(line):
             newblocks.append(line)
-            newstrs = newstrs + rmComment(line)
+            newstrs = newstrs + comm.rmComment(line)
             if newstrs.count("{") == newstrs.count("}") :
                 print(newstrs)
                 print("###")

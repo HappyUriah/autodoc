@@ -16,11 +16,7 @@ def isEnum(strs):
         return True
     return False
 
-def rmComment(line):
-    if line.find("//") != -1 :
-        return line[:line.find("//")]
-    else :
-        return line
+
 
 #提取描述信息
 def extractBrief(blocks) :
@@ -59,7 +55,7 @@ def valid(blocks) :
         if line.startswith("//"):
             continue
         else :
-            line = rmComment(line).strip()
+            line = comm.rmComment(line).strip()
             if line.count(",") + line.count("{") + line.count("}") > 1:
                 print("wrong format!!!!,请注意换行")
                 return False
@@ -84,7 +80,7 @@ def extractEnumEle(blocks) :
             continue
         else :
             #print(line)
-            line = rmComment(line)
+            line = comm.rmComment(line)
             #print(line)
             if "{" in line:
                 start = i
@@ -109,7 +105,7 @@ def extractEnumEle(blocks) :
         comm.assertStr(line.find(keyword) != -1, line +"需要注释")
         des = line[line.find(keyword) + len(keyword): ]
         comm.assertStr(des, line + "需要注释")
-        line = rmComment(line)
+        line = comm.rmComment(line)
         strs = line.split()
 
         #print(strs)
