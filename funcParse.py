@@ -87,7 +87,7 @@ def extractCommentParams(block) :
     kvs = []
     for param in params:
         #print(param)
-        assert param.find(' ') != -1
+        comm.assertStr(param.find(' ') != -1, " 提取注释参数失败，没有注释")
         tup = (param[: param.find(' ')].strip(), param[param.find(' ') + 1:].strip(' \n\t-'))
         kvs.append(tup)
                 
@@ -180,11 +180,11 @@ def parseParamsItem(params) :
     for param in ps:
         param = param.strip()
         if len(param) > 0 and "[" not in param:
-            assert param.find(' ') != -1
+            comm.assertStr( param.find(' ') != -1 , " 提取注释参数失败，参数需要注释")
             tup = (param[:param.rfind(' ')].strip(), param[param.rfind(' '):].strip())
             kv.append(tup)
         elif len(param.strip()) > 0 and "["  in param:
-            assert param.find(' ') != -1
+            comm.assertStr( param.find(' ') != -1 , " 提取注释参数失败，参数需要注释")
             tup = (param[:param.rfind(' ')].strip() + "[]", param[param.rfind(' '): param.rfind('[')].strip())
             kv.append(tup)
     
@@ -203,9 +203,9 @@ def mergeParams(commentParams, params):
         for typ, realVal in params:
             if realVal == commentVal:
                 tvd=(typ, realVal, desc)
-                assert typ
-                assert realVal
-                assert desc
+                comm.assertStr(typ, " 类型不能为空")
+                comm.assertStr(realVal, " 需要声明变量")
+                comm.assertStr(desc, " 需要注释")
                 resultVals.append(tvd)
                 break
 
@@ -281,7 +281,7 @@ def ansisFunctionBlock(strs, blocks, fout, classname=None):
     commentRets = extractCommentRet(blocks)
 
     if hasRetV :
-        assert len(commentRets) > 0
+        comm.assertStr( len(commentRets) > 0 , " 返回值需要注释")
         writeFunctionToFile(funcname, strs, brief, mergeParamItems, commentRets, fout)
     else :
         writeFunctionToFile(funcname, strs, brief, mergeParamItems, None, fout)

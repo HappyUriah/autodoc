@@ -113,8 +113,7 @@ def extractStructEle(blocks) :
     
     assert start != -1
     assert end != -1
-    assert start < end
-
+    comm.assertStr(start < end, " 格式错误，枚举类型应该包含{,},且在不同行"）
     keyword = '///<'
     items = []
     for i in range(start + 1, end):
@@ -125,9 +124,9 @@ def extractStructEle(blocks) :
             continue
         
       #  print("#############", line)
-        assert line.find(keyword) != -1
+        comm.assertStr(line.find(keyword) != -1 , " 没有找到 ///< 关键字")
         des = line[line.find(keyword) + len(keyword): ]
-        assert des
+        comm.assertStr(des, " 没有注释") 
         note = comm.rmComment(line)
        
         if '[' in note :
@@ -157,10 +156,10 @@ def writeStructToFile(brief, name, items, f) :
 def ansisStructBlock(strs, blocks, fout, classname=None):
     name = extractName(strs).strip()
     print("name = ", name);
-    assert name
+    comm.assertStr(name, " 没有找到结构体名") 
     brief = extractBrief(blocks)
     print("brief = ", brief)
-    assert brief
+    comm.assertStr(brief, " 没有描述信息") 
 
     assert valid(blocks)
 
