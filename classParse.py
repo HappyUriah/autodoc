@@ -25,7 +25,7 @@ def ansisBlock(strs, blocks,fout, clsname):
     elif isClass(strs):
         ansisClassBlock(strs, blocks,fout)
     else :
-        other.ansisOtherBlock(strs, blocks)
+        other.ansisOtherBlock(strs, blocks, fout, clsname)
 
 def extractClassName(line):
     return line.split()[1]
@@ -109,7 +109,7 @@ def ansisClassBlock(strs, blocks, fout):
                 print('\n###################\n\n\n\n')
         else :
             newblocks.append(line)
-            newstrs = newstrs + rmComment(line)
+            newstrs = newstrs + comm.rmComment(line)
             if newstrs.count("{") == newstrs.count("}") and newstrs.count('{') > 0 :
                 print(newstrs)
                 print("###")

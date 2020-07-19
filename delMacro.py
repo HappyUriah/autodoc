@@ -22,7 +22,7 @@ def ansisBlock(strs, blocks, fout):
         func.ansisFunctionBlock(strs, blocks, fout)
 
     else :
-        other.ansisOtherBlock(strs, blocks)
+        other.ansisOtherBlock(strs, blocks, fout)
 
        
 def rmMacroAndAnsis(input,output):

@@ -93,7 +93,8 @@ def extractEnumEle(blocks) :
     
     assert start != -1
     assert end != -1
-    comm.assertStr(start < end, " 格式错误，枚举类型应该包含{,},且在不同行"）
+    #comm.assertStr( start < end, " 格式错误，枚举类型应该包含{,},且在不同行")
+    comm.assertStr( start < end, " ")
 
     keyword = '///<'
     items = []
